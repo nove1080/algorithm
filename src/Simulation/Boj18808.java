@@ -113,32 +113,32 @@ public class Boj18808 {
 		System.out.println(getAnswer());
 	}
 
-}
+	static class Sticker {
+		int maxR, maxC;
+		int[][] board;
 
-class Sticker {
-	int maxR, maxC;
-	int[][] board;
-	
-	Sticker(int maxR, int maxC, int[][] board) {
-		this.board = board;
-		this.maxR = maxR;
-		this.maxC = maxC;
-	}
-	
-	//종이로 직접 그려서 회전 시 만들어지는 배열의 구조를 파악하여 코드화한다.
-	void rotate() {
-		int newR = maxC;
-		int newC = maxR;
-		int[][] newBoard = new int[newR][newC];
-		
-		for(int i = 0; i < newR; i++) {
-			for(int j = 0; j < newC; j++) {
-				newBoard[i][j] = board[maxR - j - 1][i];
-			}
+		Sticker(int maxR, int maxC, int[][] board) {
+			this.board = board;
+			this.maxR = maxR;
+			this.maxC = maxC;
 		}
-		board = newBoard;
-		maxR = newR;
-		maxC = newC;
+
+		//종이로 직접 그려서 회전 시 만들어지는 배열의 구조를 파악하여 코드화한다.
+		void rotate() {
+			int newR = maxC;
+			int newC = maxR;
+			int[][] newBoard = new int[newR][newC];
+
+			for(int i = 0; i < newR; i++) {
+				for(int j = 0; j < newC; j++) {
+					newBoard[i][j] = board[maxR - j - 1][i];
+				}
+			}
+			board = newBoard;
+			maxR = newR;
+			maxC = newC;
+		}
+
 	}
-	
+
 }

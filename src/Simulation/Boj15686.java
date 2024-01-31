@@ -95,13 +95,12 @@ public class Boj15686 {
 		System.out.println(ans);
 	}
 
-}
+	static class Point {
+		int x, y;
 
-class Point {
-	int x, y;
-	
-	Point(int x, int y) {
-		this.x = x;
-		this.y = y;
+		Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
 	}
 }
