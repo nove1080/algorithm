@@ -67,6 +67,14 @@ public class Boj11724 {
 		System.out.println(ans);
 	} // main
 
+	static class Point {
+		int x, y;
+		Point(int x, int y){
+			this.x = x;
+			this.y = y;
+		}
+	}
+
 }
 
 //class Point{

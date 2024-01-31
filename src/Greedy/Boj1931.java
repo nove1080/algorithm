@@ -3,46 +3,59 @@ package Greedy;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Boj1931 {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static Point[] jobs;
+    static Job[] jobs;
+    static Job latestJob = new Job(0, 0);
     static int n;
+    static int count;
     public static void main(String[] args) throws Exception {
         init();
         for (int i = 0; i < jobs.length; i++) {
             choice(jobs[i]);
         }
+        System.out.println(count);
     }
 
     static void init() throws Exception {
         n = Integer.parseInt(br.readLine());
-        jobs = new Point[n];
+        jobs = new Job[n];
         for (int i = 0; i < jobs.length; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-            jobs[i] = new Point(x, y);
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+            jobs[i] = new Job(start, end);
         }
         Arrays.sort(jobs, (p, q) -> {
-            return p.y - q.y;
+            if(p.end == q.end) {
+                return p.start - q.start;
+            } else {
+                return p.end - q.end;
+            }
         });
     }
 
-    static void choice(Point job) {
-
+    static void choice(Job job) {
+        if(latestJob.end > job.start) { //최근에 추가된 작업과 겹치는 경우
+            return;
+        }
+        latestJob = job;
+        count++;
     }
 
-    static class Point {
-        public int x;
-        public int y;
+    static class Job {
+        public int start;
+        public int end;
 
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
+        public Job(int start, int end) {
+            this.start = start;
+            this.end = end;
         }
     }
 }

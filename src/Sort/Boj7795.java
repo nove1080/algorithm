@@ -42,7 +42,6 @@ public class Boj7795 {
 			int idx = 0;
 			st = new StringTokenizer(br.readLine());
 			while(st.hasMoreTokens()) {
-				a[idx++] = 
 			}
 		}
 	}

@@ -4,7 +4,7 @@ import java.util.Queue;
 
 
 
-// �⺻ BFS �ڵ�
+// ?? BFS ???
 public class BFS_code {
 	
 	static int[][] board = new int[100][100];

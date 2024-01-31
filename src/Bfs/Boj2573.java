@@ -108,13 +108,14 @@ public class Boj2573 {
 			}
 		}
 	}
-	
+
+	static class Point {
+		int x, y;
+		Point(int x, int y){
+			this.x = x;
+			this.y = y;
+		}
+	}
+
 }
 
-//class Point {
-//	int x, y;
-//	Point(int x, int y){
-//		this.x = x;
-//		this.y = y;
-//	}
-//}
