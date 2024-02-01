@@ -2,17 +2,16 @@
 
 /**
  * DP
- * - 가방 무게를 기준으로 큰 무게를 작은 무게로 쪼개어 부분 문제로 만들 수 있음
+ * 2차원 테이블 정의하기
  * https://c4u-rdav.tistory.com/58
  */
-package Test;
+package Dynamic_Programming;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Boj12865 {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static int n;
@@ -23,7 +22,6 @@ public class Main {
     public static void main(String[] args) throws Exception {
         init();
         load();
-//        printDP();
         System.out.println(dp[n - 1][maxWeight]);
     }
 
