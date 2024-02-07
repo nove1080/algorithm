@@ -1,5 +1,5 @@
 //4963: 미로 탐색
-package Test;
+package Bfs;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -7,17 +7,18 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Boj4963 {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
     static StringBuilder sb = new StringBuilder();
     static int[][] board;
     static boolean[][] vis;
     static int maxR, maxC;
-    static int[] moveR = {1,0,-1,0,1,-1,1,-1};
-    static int[] moveC = {0,1,0,-1,1,-1,-1,1};
+    static int[] moveR = {1, 0, -1, 0, 1, -1, 1, -1};
+    static int[] moveC = {0, 1, 0, -1, 1, -1, -1, 1};
+
     public static void main(String[] args) throws Exception {
-        while(init()) {
+        while (init()) {
             sb.append(bfs()).append("\n");
         }
         System.out.println(sb);
@@ -28,7 +29,7 @@ public class Main {
         maxC = Integer.parseInt(st.nextToken());
         maxR = Integer.parseInt(st.nextToken());
 
-        if(maxC == 0 && maxR == 0) return false;
+        if (maxC == 0 && maxR == 0) return false;
 
         board = new int[maxR][maxC];
         vis = new boolean[maxR][maxC];
