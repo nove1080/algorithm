@@ -61,15 +61,27 @@ public class Boj11724 {
         }
     }
 
-    /**
-     * 재귀를 이용한 dfs
-     */
-    static void dfs(int v) {
+    static void dfsWithRecursion(int v) {
         if (vis[v]) return;
         vis[v] = true;
         for (int i : edges[v]) {
             if (vis[i]) continue;
-            dfs(i);
+            dfsWithRecursion(i);
+        }
+    }
+
+    static void dfs(int v) {
+        Stack<Integer> s = new Stack<>();
+        s.add(v);
+        vis[v] = true;
+
+        while (!s.isEmpty()) {
+            int cur = s.pop();
+            for (int next : edges[cur]) {
+                if(vis[next]) continue;
+                s.add(next);
+                vis[next] = true;
+            }
         }
     }
 }
