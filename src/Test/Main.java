@@ -1,86 +1,60 @@
-//4963: 미로 탐색
 package Test;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer st;
-    static StringBuilder sb = new StringBuilder();
-    static int[][] board;
-    static boolean[][] vis;
-    static int maxR, maxC;
-    static int[] moveR = {1,0,-1,0,1,-1,1,-1};
-    static int[] moveC = {0,1,0,-1,1,-1,-1,1};
+
+    static int num;
+    static long goal;
+    static int[] trees;
+    static int maxTreeHeight = 0;
+
     public static void main(String[] args) throws Exception {
-        while(init()) {
-            sb.append(bfs()).append("\n");
-        }
-        System.out.println(sb);
+        init();
+        getHeight(0, maxTreeHeight);
     }
 
-    static boolean init() throws Exception {
+    static void init() throws Exception {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        num = Integer.parseInt(st.nextToken());
+        goal = Long.parseLong(st.nextToken());
+
+        trees = new int[num];
         st = new StringTokenizer(br.readLine());
-        maxC = Integer.parseInt(st.nextToken());
-        maxR = Integer.parseInt(st.nextToken());
+        for (int i = 0; i < num; i++) {
+            trees[i] = Integer.parseInt(st.nextToken());
+            maxTreeHeight = Math.max(maxTreeHeight, trees[i]);
+        }
+    }
 
-        if(maxC == 0 && maxR == 0) return false;
-
-        board = new int[maxR][maxC];
-        vis = new boolean[maxR][maxC];
-        for (int i = 0; i < maxR; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < maxC; j++) {
-                board[i][j] = Integer.parseInt(st.nextToken());
+    static long getResult(long height) {
+        long sum = 0;
+        for (int tree : trees) {
+            if (tree > height) {
+                sum += tree - height;
             }
         }
 
-        return true;
+        return sum;
     }
 
-    static int bfs() {
-        int result = 0;
-        Queue<Point> q = new LinkedList<>();
+    //이진 탐색
+    static void getHeight(int start, int end) {
+        int maxH = -1;
+        while (start <= end) {
+            int mid = (start + end) / 2;
 
-        for (int i = 0; i < maxR; i++) {
-            for (int j = 0; j < maxC; j++) {
-                if (board[i][j] == 1 && !vis[i][j]) {
-                    result++;
-                    q.add(new Point(i, j));
-                    vis[i][j] = true;
-
-                    while (!q.isEmpty()) {
-                        Point cur = q.poll();
-
-                        for (int dir = 0; dir < 8; dir++) {
-                            int nr = cur.r + moveR[dir];
-                            int nc = cur.c + moveC[dir];
-
-                            if (nr < 0 || nc < 0 || nr >= maxR || nc >= maxC) continue;
-                            if (board[nr][nc] != 1 || vis[nr][nc]) continue;
-
-                            q.add(new Point(nr, nc));
-                            vis[nr][nc] = true;
-                        }
-                    }
-                }
+            long result = getResult(mid);
+            if (result >= goal) {
+                start = mid + 1;
+                maxH = Math.max(maxH, mid);
+            } else {
+                end = mid - 1;
             }
-        }
-
-        return result;
-    }
-
-    static class Point {
-        public int r;
-        public int c;
-
-        public Point(int r, int c) {
-            this.r = r;
-            this.c = c;
+            System.out.println(maxH);
         }
     }
 }
