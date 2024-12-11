@@ -5,132 +5,139 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 public class Boj17471 {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
     static int n;
-    static int[] populations;
-    static List<Integer>[] adjList;
-    static int minimumDifference = Integer.MAX_VALUE;
+    static int[] nums;
+    static int[] population;
+    static ArrayList<Integer>[] adjList;
+    static int answer = Integer.MAX_VALUE;
 
     public static void main(String[] args) throws Exception {
         init();
-        int tryCount = n / 2;
-        for (int i = 1; i <= tryCount; i++) {
-            gerrymandering(i, new ArrayList<>());
+        //조합 + BFS
+        for (int i = 1; i <= n / 2; i++) {
+            comb(nums, new boolean[n], 0, n, i);
         }
 
-        if (minimumDifference == Integer.MAX_VALUE) {
-            minimumDifference = -1;
+        if (answer == Integer.MAX_VALUE) {
+            answer = -1;
         }
-        System.out.println(minimumDifference);
+        System.out.println(answer);
     }
 
     public static void init() throws Exception {
         n = Integer.parseInt(br.readLine());
-        populations = new int[n];
+        String[] input = br.readLine().split(" ");
+
+        population = new int[n];
+        nums = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            population[i] = Integer.parseInt(input[i]);
+            nums[i] = i;
+        }
+
         adjList = new ArrayList[n];
 
-        String[] input = br.readLine().split(" ");
-        for (int i = 0; i < n; i++) {
-            populations[i] = Integer.parseInt(input[i]);
-            adjList[i] = new ArrayList<>();
-        }
-
-        //그래프 정보 초기화
         for (int i = 0; i < n; i++) {
             input = br.readLine().split(" ");
-            int connectedCount = Integer.parseInt(input[0]);
-
-            for (int j = 1; j <= connectedCount; j++) {
-                int connectedNum = Integer.parseInt(input[j]) - 1;
-                adjList[i].add(connectedNum);
-                adjList[connectedNum].add(i);
+            adjList[i] = new ArrayList(Integer.parseInt(input[0]));
+            for (int j = 1; j < input.length; j++) {
+                adjList[i].add(Integer.parseInt(input[j]) - 1);
             }
         }
     }
 
-    public static void gerrymandering(int chooseCount, List<Integer> area) {
-        if (chooseCount == 0) {
-            List<Integer> others = makeOthers(area);
-            if (isConnected(area) && isConnected(others)) {
-                minimumDifference = Math.min(minimumDifference, getDifference(area, others));
+    /**
+     * 재귀를 이용한 조합(nCr)을 수행합니다.
+     *
+     * @param arr   조합에 사용될 원소
+     * @param vis   선택된 원소를 표기할 boolean[]
+     * @param start 고려할 원소의 시작 인덱스 (start 이상 인덱스부터 조합의 대상이 된다.)
+     * @param n     nCr의 n
+     * @param r     nCr의 r
+     */
+    public static void comb(int[] arr, boolean[] vis, int start, int n, int r) {
+        if (r == 0) {
+            int result = bfs(arr, vis);
+            if (result >= 0) {
+                answer = Math.min(result, answer);
             }
+            return;
         }
+
+        for (int i = start; i < n; i++) {
+            vis[i] = true;
+            comb(arr, vis, i + 1, n, r - 1);
+            vis[i] = false;
+        }
+    }
+
+    public static int bfs(int[] arr, boolean[] vis) {
+        Queue<Integer> trueQ = new LinkedList<>();
+        boolean[] trueVis = new boolean[n];
 
         for (int i = 0; i < n; i++) {
-            if(!area.contains(i)) {
-                area.add(i);
-                gerrymandering(chooseCount - 1, area);
-                area.remove(area.size() - 1);
+            if (vis[i]) { //조합을 통해 뽑힌 구역
+                trueQ.add(arr[i]);
+                trueVis[i] = true;
+
+                while (!trueQ.isEmpty()) {
+                    Integer cur = trueQ.poll();
+                    for (Integer next : adjList[cur]) {
+                        if (trueVis[next] || !vis[next]) {
+                            continue;
+                        }
+                        trueQ.add(next);
+                        trueVis[next] = true;
+                    }
+                }
+                break;
             }
         }
-    }
 
-    //파라미터로 전달받은 선거구에 속하지 않은 다른 지역들을 선거구로 만든다.
-    private static List<Integer> makeOthers(List<Integer> area) {
-        List<Integer> others = new ArrayList<>();
+        Queue<Integer> falseQ = new LinkedList<>();
+        boolean[] falseVis = new boolean[n];
+
         for (int i = 0; i < n; i++) {
-            if(!area.contains(i)) {
-                others.add(i);
-            }
-        }
-        return others;
-    }
+            if (!vis[i]) {
+                falseQ.add(arr[i]);
+                falseVis[i] = true;
 
-    //bfs로 각 구역이 연결되어 있는지 확인
-    public static boolean isConnected(List<Integer> area) {
-        List<Integer> vis = new ArrayList<>();
-        Queue<Integer> q = new LinkedList<>();
-        q.add(area.get(0));
-        vis.add(area.get(0));
-
-        while (!q.isEmpty()) {
-            Integer cur = q.poll();
-            for (Integer next : adjList[cur]) {
-                if(!area.contains(next) || vis.contains(next)) continue;
-                q.add(next);
-                vis.add(next);
+                while (!falseQ.isEmpty()) {
+                    Integer cur = falseQ.poll();
+                    for (Integer next : adjList[cur]) {
+                        if (falseVis[next] || vis[next]) {
+                            continue;
+                        }
+                        falseQ.add(next);
+                        falseVis[next] = true;
+                    }
+                }
+                break;
             }
         }
 
-        return isAllConnected(area, vis);
-    }
-
-    private static boolean isAllConnected(List<Integer> area, List<Integer> vis) {
-        return area.size() == vis.size();
-    }
-
-    //두 선거구의 인구 차를 반환
-    public static int getDifference(List<Integer> areaA, List<Integer> areaB) {
-        int populationA = 0;
-        for (Integer a : areaA) {
-            populationA += populations[a];
+        //인구 차이 계산
+        int result = 0;
+        for (int i = 0; i < n; i++) {
+            if (vis[i] && trueVis[i]) {
+                result += population[i];
+            } else if (!vis[i] && falseVis[i]) {
+                result -= population[i];
+            } else {
+                return -1;
+            }
         }
 
-        int populationB = 0;
-        for (Integer b : areaB) {
-            populationB += populations[b];
-        }
-        return Math.abs(populationA - populationB);
+        return Math.abs(result);
     }
 
-    private static void debugging(List<Integer> area, List<Integer> others) {
-        System.out.println("====== 게리멘더링 결과 ======");
-        System.out.print("[area] : ");
-        for (Integer i : area) {
-            System.out.print(i + ", ");
-        }
-        System.out.println();
-        System.out.print("[others] : ");
-        for (Integer i : others) {
-            System.out.print(i + ", ");
-        }
-        System.out.println();
-        minimumDifference = Math.min(minimumDifference, getDifference(area, others));
-        System.out.println("인구 차이 : " + minimumDifference);
-    }
 }
+
+
