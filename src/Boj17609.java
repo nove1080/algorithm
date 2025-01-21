@@ -16,47 +16,23 @@ public class Boj17609 {
         tc = Integer.parseInt(br.readLine());
         for (int i = 0; i < tc; i++) {
             char[] cArr = br.readLine().toCharArray();
-            isPalindrome(cArr, 0, cArr.length - 1, 0);
+            sb.append(isPalindrome(cArr, 0, cArr.length - 1, 0)).append("\n");
         }
     }
 
-    public static void isPalindrome(char[] cArr, int left, int right, int mismatchCount) {
-        if (mismatchCount > 1 || left > right) {
-            sb.append(mismatchCount).append("\n");
-            return;
-        }
+    public static int isPalindrome(char[] cArr, int left, int right, int mismatchCount) {
+        if(mismatchCount >= 2) return 2;
 
         while (left <= right) {
-            if (cArr[left] == cArr[right]) {
+            if (cArr[left] == cArr[right]) { //일치한다면
                 left++;
                 right--;
-                continue;
+            } else { //불일치한다면
+                return Math.min(isPalindrome(cArr, left + 1, right, mismatchCount + 1),
+                    isPalindrome(cArr, left, right - 1, mismatchCount + 1));
             }
-
-            //한쪽씩 지우고 비교해보기
-            int tmpLeft = left + 1;
-            if (cArr[tmpLeft] == cArr[right] && mismatchCount == 0) {
-                left = tmpLeft;
-                left++;
-                right--;
-                isPalindrome(cArr, left, right, mismatchCount + 1);
-            }
-
-            int tmpRight = right - 1;
-            if (cArr[left] == cArr[tmpRight] && mismatchCount == 0) {
-                left++;
-                right = tmpRight;
-                right--;
-                isPalindrome(cArr, left, right, mismatchCount + 1);
-            }
-            
-            //무한 루프
         }
-
-        if (mismatchCount == 0) {
-            sb.append(mismatchCount).append("\n");
-        }
-        return;
+        return mismatchCount;
     }
 
 }
