@@ -21,7 +21,7 @@ public class Boj17609 {
     }
 
     public static void isPalindrome(char[] cArr, int left, int right, int mismatchCount) {
-        if (mismatchCount > 1) {
+        if (mismatchCount > 1 || left > right) {
             sb.append(mismatchCount).append("\n");
             return;
         }
@@ -49,8 +49,13 @@ public class Boj17609 {
                 right--;
                 isPalindrome(cArr, left, right, mismatchCount + 1);
             }
+            
+            //무한 루프
         }
 
+        if (mismatchCount == 0) {
+            sb.append(mismatchCount).append("\n");
+        }
         return;
     }
 
