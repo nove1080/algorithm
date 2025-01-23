@@ -14,6 +14,7 @@ public class Boj15961 {
     static int c; //쿠폰 번호
 
     static int[] dishes;
+    static int[] sushi;
 
     static HashMap<Integer, Integer> map = new LinkedHashMap<>();
 
@@ -30,6 +31,7 @@ public class Boj15961 {
         c = Integer.parseInt(input[3]);
 
         dishes = new int[n];
+        sushi = new int[d + 1];
 
         for (int i = 0; i < n; i++) {
             dishes[i] = Integer.parseInt(br.readLine());
@@ -38,32 +40,23 @@ public class Boj15961 {
 
     public static int slidingWindow() {
         int answer = 0;
-        map.put(c, 1); //쿠폰 초밥 먹음
+
+        //쿠폰 초밥 먹기
+        sushi[c]++;
+        answer++;
+
         for (int i = 0; i < k; i++) {
-            if (map.containsKey(dishes[i])) {
-                map.put(dishes[i], map.get(dishes[i]) + 1);
-            } else {
-                map.put(dishes[i], 1);
-            }
+            if(sushi[dishes[i]]++ == 0) answer++;
         }
 
+        int result = answer;
         int en = k - 1;
         for (int st = 0; st < n; st++) {
-            answer = Math.max(answer, map.size());
-
-            if (map.get(dishes[st]) > 1) {
-                map.put(dishes[st], map.get(dishes[st]) - 1);
-            } else {
-                map.remove(dishes[st]);
-            }
+            answer = Math.max(answer, result);
+            if (sushi[dishes[st]]-- == 1) result--;
 
             en = (en + 1) % n;
-
-            if (map.containsKey(dishes[en])) {
-                map.put(dishes[en], map.get(dishes[en]) + 1);
-            } else {
-                map.put(dishes[en], 1);
-            }
+            if (sushi[dishes[en]]++ == 0) result++;
         }
 
         return answer;
