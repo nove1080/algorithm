@@ -10,128 +10,92 @@ public class Boj1600 {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    static int horseMoveCount;
     static int maxR, maxC;
-    static int[][] board;
-    static boolean[][][] visited; //[][][k] : 말로 k번째 방문한 경우
+    static boolean[][] board;
+    static boolean[][][] vis; //vis[말로 이동한 횟수][R][C] = 이동 횟수
 
-    static int[] moveR = new int[]{1, 0, -1, 0};
-    static int[] moveC = new int[]{0, 1, 0, -1};
-    static int[] horseMoveR = new int[]{-2, -2, -1, -1, 1, 1, 2, 2};
-    static int[] horseMoveC = new int[]{-1, 1, -2, 2, -2, 2, -1, 1};
+    static int maxHorseMoveCount;
+
+    static int[] moveR = {1, 0, -1, 0};
+    static int[] moveC = {0, 1, 0, -1};
+    static int[] moveHorseR = {-2, -2, -1, -1, 1, 1, 2, 2};
+    static int[] moveHorseC = {-1, 1, -2, 2, -2, 2, -1, 1};
+
+    static int answer;
 
     public static void main(String[] args) throws Exception {
         init();
-        Queue<Point> q = new LinkedList<>();
-        q.add(new Point(0, 0, 0, 0));
-        for (int i = 0; i < horseMoveCount; i++) {
-            visited[0][0][i] = true;
-        }
+        System.out.println(bfs(0, 0));
+    }
 
-        Point temp = null;
+    public static void init() throws Exception {
+        maxHorseMoveCount = Integer.parseInt(br.readLine());
+        String[] input = br.readLine().split(" ");
+        maxC = Integer.parseInt(input[0]);
+        maxR = Integer.parseInt(input[1]);
+
+        board = new boolean[maxR][maxC];
+        vis = new boolean[maxHorseMoveCount + 1][maxR][maxC];
+
+        for (int i = 0; i < maxR; i++) {
+            input = br.readLine().split(" ");
+            for (int j = 0; j < maxC; j++) {
+                board[i][j] = Integer.parseInt(input[j]) == 0;
+            }
+        }
+    }
+
+    public static int bfs(int startR, int startC) {
+        Queue<Point> q = new LinkedList<>();
+        q.add(new Point(startR, startC, 0, 0));
+        vis[0][startR][startC] = true;
+
         while (!q.isEmpty()) {
             Point cur = q.poll();
-            temp = cur;
-            if (cur.r == maxR - 1 && cur.c == maxC - 1) {
-                System.out.println(cur.depth);
-                return;
-            }
-            for (int dir = 0; dir < 4; dir++) { //원숭이 움직임
+            if (cur.r == maxR - 1 && cur.c == maxC - 1) return cur.depth;
+
+            //원숭이
+            for (int dir = 0; dir < 4; dir++) {
                 int nr = cur.r + moveR[dir];
                 int nc = cur.c + moveC[dir];
 
                 if (nr < 0 || nc < 0 || nr >= maxR || nc >= maxC) continue;
-                if (board[nr][nc] != 0 || visited[nr][nc][0]) continue;
+                if (!board[nr][nc] || vis[cur.horseCount][nr][nc]) continue;
 
-                q.add(new Point(nr, nc, cur.depth + 1, cur.horseMoveCount));
-                visited[nr][nc][0] = true;
+                q.add(new Point(nr, nc, cur.depth + 1, cur.horseCount));
+                vis[cur.horseCount][nr][nc] = true;
             }
 
-            if (cur.horseMoveCount < horseMoveCount) { //말로 이동할 수 있는 경우
-                System.out.println("말 가능");
+            //말
+            if (cur.horseCount < maxHorseMoveCount) {
                 for (int dir = 0; dir < 8; dir++) {
-                    int nr = cur.r + horseMoveR[dir];
-                    int nc = cur.c + horseMoveC[dir];
+                    int nr = cur.r + moveHorseR[dir];
+                    int nc = cur.c + moveHorseC[dir];
 
                     if (nr < 0 || nc < 0 || nr >= maxR || nc >= maxC) continue;
-                    if (board[nr][nc] != 0 || visited[nr][nc][cur.horseMoveCount + 1]) continue;
+                    if (!board[nr][nc] || vis[cur.horseCount + 1][nr][nc]) continue;
 
-                    q.add(new Point(nr, nc, cur.depth + 1, cur.horseMoveCount + 1));
-                    visited[nr][nc][cur.horseMoveCount + 1] = true;
+                    q.add(new Point(nr, nc, cur.depth + 1, cur.horseCount + 1));
+                    vis[cur.horseCount + 1][nr][nc] = true;
                 }
             }
         }
 
-        printVisited();
-        System.out.println("fuck: " + temp);
-        System.out.println(-1);
-    }
-
-    private static void printVisited() {
-        for (int k = 0; k <=horseMoveCount; k++) {
-            System.out.println("k=" + k);
-            for (int i = 0; i < maxR; i++) {
-                for (int j = 0; j < maxC; j++) {
-                    int vis = visited[i][j][k] == true ? 1 : 0;
-                    System.out.print(vis + " ");
-                }
-                System.out.println();
-            }
-            System.out.println("===================");
-        }
-    }
-
-    public static void init() throws Exception {
-        horseMoveCount = Integer.parseInt(br.readLine());
-        String[] inputs = br.readLine().split(" ");
-        maxR = Integer.parseInt(inputs[1]);
-        maxC = Integer.parseInt(inputs[0]);
-
-        board = new int[maxR][maxC];
-        visited = new boolean[maxR][maxC][horseMoveCount + 1];
-        for (int i = 0; i < maxR; i++) {
-            inputs = br.readLine().split(" ");
-            for (int j = 0; j < maxC; j++) {
-                board[i][j] = Integer.parseInt(inputs[j]);
-            }
-        }
+        return -1;
     }
 
     static class Point {
-        int r, c, depth, horseMoveCount;
+        int r, c;
+        int depth;
+        int horseCount;
 
-        public Point(int r, int c, int depth, int horseMoveCount) {
+        public Point(int r, int c, int depth, int horseCount) {
             this.r = r;
             this.c = c;
             this.depth = depth;
-            this.horseMoveCount = horseMoveCount;
+            this.horseCount = horseCount;
         }
 
-        @Override
-        public String toString() {
-            return "Point{" +
-                "r=" + r +
-                ", c=" + c +
-                ", depth=" + depth +
-                ", horseMoveCount=" + horseMoveCount +
-                '}';
-        }
     }
 
 }
-
-/**
-1
-7 8
-0 0 0 0 0 0 0
-1 1 1 1 1 1 0
-1 1 1 1 1 1 0
-0 0 0 1 1 1 0
-0 1 1 1 0 0 0
-0 1 1 1 1 1 1
-0 1 1 1 1 1 1
-0 0 0 0 0 0 0
- *
- *
- *
- */
