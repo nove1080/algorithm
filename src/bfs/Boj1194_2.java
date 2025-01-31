@@ -32,7 +32,7 @@ public class Boj1194_2 {
         maxC = Integer.parseInt(input[1]);
 
         board = new char[maxR][maxC];
-        vis = new boolean[150][maxR][maxC]; //[key 조합 수][maxR][maxC]
+        vis = new boolean[(int) Math.pow(2, 6)][maxR][maxC]; //[key 조합 수][maxR][maxC]
         for (int i = 0; i < maxR; i++) {
             input = br.readLine().split("");
             for (int j = 0; j < maxC; j++) {
