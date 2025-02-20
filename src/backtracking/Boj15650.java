@@ -1,51 +1,47 @@
 // N과 M(2)
 package backtracking;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Boj15650 {
-	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	static StringTokenizer st;
-	static StringBuilder sb = new StringBuilder();
-	static int n, m;
-	static int[] arr;
-	static boolean[] isUsed;
-	
-	static void init() throws Exception {
-		st = new StringTokenizer(br.readLine());
-		n = Integer.parseInt(st.nextToken());
-		m = Integer.parseInt(st.nextToken());
-		arr = new int[m];
-		isUsed = new boolean[n];
-	}
-	
-	static void backtracking(int num, int length) {
-		// base condition
-		if(length == m) {
-			for(int i = 0; i < length; i++) {
-				sb.append(arr[i]).append(" ");
-			}
-			sb.append("\n");
-			return;
-		}
-		
-		// recursion
-		for(int i = num; i < n; i++) {
-			if(!isUsed[i]) {
-				int nextNum = i + 1;
-				isUsed[i] = true;
-				arr[length] = nextNum;
-				backtracking(nextNum, length + 1);
-				isUsed[i] = false;
-			}
-		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		init();
-		backtracking(0, 0);
-		System.out.println(sb);
-	}
 
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+
+    static int n, m;
+
+    static boolean[] vis;
+
+    public static void main(String[] args) throws Exception {
+        init();
+        combination(-1, m);
+        System.out.println(sb);
+    }
+
+    public static void init() throws Exception {
+        String[] input = br.readLine().split(" ");
+        n = Integer.parseInt(input[0]);
+        m = Integer.parseInt(input[1]);
+
+        vis = new boolean[n];
+    }
+
+    public static void combination(int start, int r) {
+        if (r == 0) {
+            for (int i = 0; i < n; i++) {
+                if(vis[i]) {
+                    sb.append(i + 1).append(" ");
+                }
+            }
+            sb.append("\n");
+            return;
+        }
+
+        for (int next = start + 1; next < n; next++) {
+            vis[next] = true;
+            combination(next, r - 1);
+            vis[next] = false;
+        }
+    }
 }
