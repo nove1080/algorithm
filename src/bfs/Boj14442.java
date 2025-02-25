@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class boj14442 {
+public class Boj14442 {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
