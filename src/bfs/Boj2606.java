@@ -1,38 +1,64 @@
-package bfs;// ���̷��� [S3]
+package bfs;
+
 import java.io.*;
 import java.util.*;
+
 public class Boj2606 {
-	static int[][] board;
-	static int[] vis;
+
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+	static int computer;
+	static int network;
+
+	static ArrayList<Integer>[] adjList;
+	static boolean[] vis;
+
 	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int total = Integer.parseInt(br.readLine());
-		int n = Integer.parseInt(br.readLine());
-		
-		board = new int[total][total];
-		vis = new int[total];
-		Arrays.fill(vis, 0);
-		
-		Queue<Integer> q = new LinkedList();
-		for(int i = 0; i < n; i++) {
-			StringTokenizer st = new StringTokenizer(br.readLine());
-			int a = Integer.parseInt(st.nextToken()) - 1;
-			int b = Integer.parseInt(st.nextToken()) - 1;			
-			board[a][b] = 1;			
-			board[b][a] = 1;
+		init();
+
+		System.out.println(bfs(0));
+	}
+
+	public static void init() throws Exception {
+		computer = Integer.parseInt(br.readLine());
+		network = Integer.parseInt(br.readLine());
+
+		vis = new boolean[computer];
+
+		adjList = new ArrayList[computer];
+		for (int i = 0; i < computer; i++) {
+			adjList[i] = new ArrayList<>();
 		}
+
+		for (int i = 0; i < network; i++) {
+			String[] input = br.readLine().split(" ");
+			int num1 = Integer.parseInt(input[0]) - 1;
+			int num2 = Integer.parseInt(input[1]) - 1;
+
+			adjList[num1].add(num2);
+			adjList[num2].add(num1);
+		}
+	}
+
+	public static int bfs(int start) {
+		int count = 0; //감염된 컴퓨터 수
 		
-		q.add(0);  vis[0] = 1;
-        int ans = 0;
-		while(!q.isEmpty()) {
-			int cur = q.poll();  
-			
-			for(int i = 1; i < total; i++) {
-				if(board[cur][i] == 1 && vis[i] != 1) {
-					q.add(i);  vis[i] = 1;  ans++;
-				}
+		Queue<Integer> q = new LinkedList<>();
+		q.add(start);
+		vis[start] = true;
+
+		while (!q.isEmpty()) {
+			Integer cur = q.poll();
+
+			for(Integer next : adjList[cur]) {
+				if(vis[next]) continue;
+
+				q.add(next);
+				vis[next] = true;
+				count++;
 			}
 		}
-		System.out.println(ans);
+
+		return count;
 	}
 }
