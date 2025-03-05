@@ -1,9 +1,8 @@
-// �丶�� [G5]
+package bfs;
 
-// sol
-//  1. 3���� BFS
 import java.io.*;
 import java.util.*;
+
 public class Boj7569 {
 	static int[][][] board;
 	static int[][][] vis;
