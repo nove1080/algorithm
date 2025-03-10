@@ -4,80 +4,70 @@ package binarysearch;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 public class Boj10816 {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringBuilder sb = new StringBuilder();
+
     static int n, m;
-    static int[] arr1, arr2;
-    static int[] counts;
-    static int[] checks = new int[20000001];
+    static int[] source;
+    static int[] targets;
 
     public static void main(String[] args) throws Exception {
         init();
-//        for (int i = 0; i < m; i++) {
-//            counts[i] = binarySearch(0, m - 1, arr2[i]);
-//        }
-        printAnswer();
-    }
-
-    private static void printAnswer() {
-        for (int count : counts) {
-            sb.append(count).append(" ");
+        Arrays.sort(source);
+        for (int target : targets) {
+            sb.append(search(target)).append(" ");
         }
         System.out.println(sb);
     }
 
-    static void init() throws Exception {
+    public static void init() throws Exception {
         n = Integer.parseInt(br.readLine());
-        arr1 = new int[n];
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        source = new int[n];
+        String[] input = br.readLine().split(" ");
         for (int i = 0; i < n; i++) {
-            arr1[i] = Integer.parseInt(st.nextToken());
+            source[i] = Integer.parseInt(input[i]);
         }
 
         m = Integer.parseInt(br.readLine());
-        arr2 = new int[m];
-        counts = new int[m];
-        st = new StringTokenizer(br.readLine());
+        targets = new int[m];
+        input = br.readLine().split(" ");
         for (int i = 0; i < m; i++) {
-            arr2[i] = Integer.parseInt(st.nextToken());
+            targets[i] = Integer.parseInt(input[i]);
         }
-
-        Arrays.sort(arr1);
     }
 
-//    static int binarySearch(int start, int end, int key) {
-//        int count = 0;
-//        while (start <= end) {
-//            int mid = (start + end) / 2;
-//
-//            if (arr1[mid] < key) {
-//                start = mid + 1;
-//            } else if (arr1[mid] > key) {
-//                end = mid - 1;
-//            } else { //found
-//                if(checks[key + 10000000] != 0) {
-//                    count = checks[key + 10000000];
-//                } else {
-//                    for (int i = mid + 1; i < n; i++) {
-//                        if(arr1[i] != key) break;
-//                        count++;
-//                    }
-//                    for (int i = mid; i >= 0; i--) {
-//                        if(arr1[i] != key) break;
-//                        count++;
-//                    }
-//                    checks[key + 10000000] = count;
-//                }
-//                return count;
-//            }
-//        }
-//
-//        return 0;
-//    }
+    public static int search(int target) {
+        return upperBound(target) - lowerBound(target);
+    }
 
+    public static int lowerBound(int target) {
+        int st = 0;
+        int en = n;
 
+        while (st < en) {
+            int mid = (st + en) / 2;
+
+            if(source[mid] < target) st = mid + 1;
+            if(source[mid] >= target) en = mid;
+        }
+
+        return en;
+    }
+
+    public static int upperBound(int target) {
+        int st = 0;
+        int en = n;
+
+        while (st < en) {
+            int mid = (st + en) / 2;
+
+            if (source[mid] <= target) st = mid + 1;
+            if (source[mid] > target) en = mid;
+        }
+
+        return en;
+    }
 }
