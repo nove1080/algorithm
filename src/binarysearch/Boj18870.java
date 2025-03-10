@@ -1,68 +1,60 @@
 //좌표 압축
-/*dp*/
 package binarysearch;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Boj18870 {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+
     static int n;
-    static Number[] numbers;
+    static int[] origin;
+    static int[] sortedArr;
+    static HashMap<Integer, Integer> maps = new LinkedHashMap<>();
 
     public static void main(String[] args) throws Exception {
         init();
-        dp();
-        printAnswer();
+        compress();
+        printResult();
     }
 
-    static void init() throws Exception {
-        n = Integer.parseInt(br.readLine());
-        numbers = new Number[n];
-        StringTokenizer st = new StringTokenizer(br.readLine());
+    public static void init() throws Exception {
+        String[] input = br.readLine().split(" ");
+        n = Integer.parseInt(input[0]);
+        origin = new int[n];
+        sortedArr = new int[n];
+        input = br.readLine().split(" ");
         for (int i = 0; i < n; i++) {
-            int num = Integer.parseInt(st.nextToken());
-            numbers[i] = new Number(i, num);
+            origin[i] = Integer.parseInt(input[i]);
+            sortedArr[i] = Integer.parseInt(input[i]);
         }
 
-        Arrays.sort(numbers, (n1, n2) -> {
-            return n1.num - n2.num;
-        });
+        Arrays.sort(sortedArr);
     }
 
-    static void dp() {
-        for (int i = 1; i < n; i++) {
-            if (numbers[i].num == numbers[i - 1].num) {
-                numbers[i].count = numbers[i - 1].count;
-            } else {
-                numbers[i].count = numbers[i - 1].count + 1;
+    public static void compress() {
+        int num = 0;
+
+        int prev = Integer.MIN_VALUE;
+        for (int cur : sortedArr) {
+            if(prev != cur) {
+                maps.put(cur, num);
+                num++;
             }
+            prev = cur;
         }
     }
 
-    static void printAnswer() {
-        StringBuilder sb = new StringBuilder();
-        Arrays.sort(numbers, (n1, n2) -> {
-            return n1.index - n2.index;
-        });
-
-        for (Number number : numbers) {
-            sb.append(number.count).append(" ");
+    public static void printResult() {
+        for (int num : origin) {
+            sb.append(maps.get(num)).append(" ");
         }
         System.out.println(sb);
     }
 
-    static class Number {
-        int index;
-        int num;
-        int count;
-
-        public Number(int index, int num) {
-            this.index = index;
-            this.num = num;
-        }
-    }
 }
