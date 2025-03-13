@@ -1,71 +1,67 @@
-//수 찾기
 package binarysearch;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 public class Boj1920 {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringBuilder sb = new StringBuilder();
+
     static int n, m;
-    static int[] arr1;
-    static int[] arr2;
+    static int[] arr1, arr2;
 
     public static void main(String[] args) throws Exception {
         init();
         Arrays.sort(arr1);
-        for (int i : arr2) {
-            sb.append(binarySearch(0, n - 1, i)).append("\n");
+//        binarySearchUsingLibrary();
+        for (int target : arr2) {
+            sb.append(binarySearch(arr1, target) >= 0 ? 1 : 0).append("\n");
         }
         System.out.println(sb);
     }
 
-    static void init() throws Exception {
-        n = Integer.parseInt(br.readLine());
+    public static void init() throws Exception {
+        String[] input = br.readLine().split(" ");
+        n = Integer.parseInt(input[0]);
         arr1 = new int[n];
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        input = br.readLine().split(" ");
         for (int i = 0; i < n; i++) {
-            arr1[i] = Integer.parseInt(st.nextToken());
+            arr1[i] = Integer.parseInt(input[i]);
         }
 
-        m = Integer.parseInt(br.readLine());
+        input = br.readLine().split(" ");
+        m = Integer.parseInt(input[0]);
         arr2 = new int[m];
-        st = new StringTokenizer(br.readLine());
+        input = br.readLine().split(" ");
         for (int i = 0; i < m; i++) {
-            arr2[i] = Integer.parseInt(st.nextToken());
+            arr2[i] = Integer.parseInt(input[i]);
         }
     }
 
-    static int binarySearchWithRecursion(int start, int end, int key) {
-        if(start <= end) {
-            int mid = (start + end) / 2;
-            if (arr1[mid] == key) {
-                return 1;
-            } else if (arr1[mid] > key) {
-                return binarySearch(start, mid - 1, key);
-            } else {
-                return binarySearch(mid + 1, end, key);
+    public static void binarySearchUsingLibrary() {
+        for (int target : arr2) {
+            sb.append(Arrays.binarySearch(arr1, target) >= 0 ? 1 : 0).append("\n");
+        }
+    }
+
+    public static int binarySearch(int[] arr, int target) {
+        int st = 0;
+        int en = arr.length - 1;
+
+        while (st <= en) {
+            int mid = (st + en) / 2;
+
+            if(arr[mid] < target) {
+                st = mid + 1;
+            } else if(arr[mid] > target) {
+                en = mid - 1;
+            } else { //발견
+                return mid;
             }
         }
-        return 0;
+
+        return -1;
     }
-
-
-    static int binarySearch(int start, int end, int key) {
-        while(start <= end) {
-            int mid = (start + end) / 2;
-            if(arr1[mid] > key) {
-                end = mid - 1;
-            } else if (arr1[mid] < key) {
-                start = mid + 1;
-            } else { //found
-                return 1;
-            }
-        }
-        return 0;
-    }
-
 }
