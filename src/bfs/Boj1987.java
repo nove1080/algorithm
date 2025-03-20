@@ -13,6 +13,7 @@ public class Boj1987 {
     static int maxR, maxC;
 
     static char[][] board;
+    static boolean[][] vis;
     static int[] moveR = {1, 0, -1, 0};
     static int[] moveC = {0, 1, 0, -1};
 
@@ -49,35 +50,36 @@ public class Boj1987 {
     }
 
     public static void init() throws Exception {
-        /**
-         * BFS: 메모리 초과 예시 입력 데이터
-         * 20 20
-         * ABCDEFGHIJKLMNOPQRST
-         * BCDEFGHIJKLMNOPQRSTU
-         * CDEFGHIJKLMNOPQRSTUV
-         * DEFGHIJKLMNOPQRSTUVW
-         * EFGHIJKLMNOPQRSTUVWX
-         * FGHIJKLMNOPQRSTUVWXY
-         * GHIJKLMNOPQRSTUVWXYZ
-         * HIJKLMNOPQRSTUVWXYZA
-         * IJKLMNOPQRSTUVWXYZAB
-         * JKLMNOPQRSTUVWXYZABC
-         * KLMNOPQRSTUVWXYZABCD
-         * LMNOPQRSTUVWXYZABCDE
-         * MNOPQRSTUVWXYZABCDEF
-         * NOPQRSTUVWXYZABCDEFG
-         * OPQRSTUVWXYZABCDEFGH
-         * PQRSTUVWXYZABCDEFGHI
-         * QRSTUVWXYZABCDEFGHIJ
-         * RSTUVWXYZABCDEFGHIJK
-         * STUVWXYZABCDEFGHIJKL
-         * TUVWXYZABCDEFGHIJKLM
-         */
+
+
+//20 20
+//ABCDEFGHIJKLMNOPQRST
+//BCDEFGHIJKLMNOPQRSTU
+//CDEFGHIJKLMNOPQRSTUV
+//DEFGHIJKLMNOPQRSTUVW
+//EFGHIJKLMNOPQRSTUVWX
+//FGHIJKLMNOPQRSTUVWXY
+//GHIJKLMNOPQRSTUVWXYZ
+//HIJKLMNOPQRSTUVWXYZA
+//IJKLMNOPQRSTUVWXYZAB
+//JKLMNOPQRSTUVWXYZABC
+//KLMNOPQRSTUVWXYZABCD
+//LMNOPQRSTUVWXYZABCDE
+//MNOPQRSTUVWXYZABCDEF
+//NOPQRSTUVWXYZABCDEFG
+//OPQRSTUVWXYZABCDEFGH
+//PQRSTUVWXYZABCDEFGHI
+//QRSTUVWXYZABCDEFGHIJ
+//RSTUVWXYZABCDEFGHIJK
+//STUVWXYZABCDEFGHIJKL
+//TUVWXYZABCDEFGHIJKLM
+
         String[] input = br.readLine().split(" ");
         maxR = Integer.parseInt(input[0]);
         maxC = Integer.parseInt(input[1]);
 
         board = new char[maxR][maxC];
+        vis = new boolean[maxR][maxC];
         for (int i = 0; i < maxR; i++) {
             input = br.readLine().split("");
             for (int j = 0; j < maxC; j++) {
@@ -90,6 +92,7 @@ public class Boj1987 {
         int result = 0;
         Queue<Point> q = new LinkedList<>();
         q.add(new Point(0, 0, 0, 0).addHistory(board[0][0]));
+        vis[0][0] = true;
 
         while (!q.isEmpty()) {
             Point cur = q.poll();
@@ -103,9 +106,11 @@ public class Boj1987 {
                 int nc = cur.c + moveC[dir];
 
                 if (nr < 0 || nc < 0 || nr >= maxR || nc >= maxC) continue;
+//                if (vis[nr][nc]) continue;
                 if (cur.has(board[nr][nc])) continue;
 
                 q.add(new Point(nr, nc, cur.history, cur.size).addHistory(board[nr][nc]));
+                vis[nr][nc] = true;
             }
         }
 

@@ -1,7 +1,5 @@
-// ���ϻ��� [G5]
+package bfs;
 
-// sol
-//  1. BFS�� ���� ����
 import java.io.*;
 import java.util.*;
 
@@ -17,12 +15,10 @@ public class Boj10026 {
 		
 		// init
 		char[][] board = new char[n][n];
-//		boolean[][] vis = new boolean[n][n];
 		for(int i = 0; i < n; i++) {
 			char[] tmp = br.readLine().toCharArray();
 			for(int j = 0; j < n; j++) {
 				board[i][j] = tmp[j];
-//				vis[i][j] = false;
 			}
 		}
 		
@@ -67,9 +63,9 @@ public class Boj10026 {
 							vis[nx][ny] = true;
  						}
 					}
-				} // if
-			} // for2
-		} // for1
+				}
+			}
+		}
 		
 		return cnt;
 	}
