@@ -7,28 +7,33 @@ import java.util.PriorityQueue;
 public class Boj15903 {
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringBuilder sb = new StringBuilder();
 
-    static int n;
+    static int n, m;
+
+    static PriorityQueue<Long> pq = new PriorityQueue<>();
 
     public static void main(String[] args) throws Exception {
         init();
 
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-        for (int i = 0; i < n; i++) {
-            int input = Integer.parseInt(br.readLine());
+        while (m-- > 0) {
+            Long n1 = pq.poll();
+            Long n2 = pq.poll();
 
-            if (input == 0) {
-                sb.append(pq.isEmpty() ? 0 : pq.poll()).append("\n");
-            } else {
-                pq.add(input);
-            }
+            pq.add(n1 + n2);
+            pq.add(n1 + n2);
         }
-
-        System.out.println(sb);
+        System.out.println(pq.stream().mapToLong(n1 -> n1).sum());
     }
 
     public static void init() throws Exception {
-        n = Integer.parseInt(br.readLine());
+        String[] input = br.readLine().split(" ");
+
+        n = Integer.parseInt(input[0]);
+        m = Integer.parseInt(input[1]);
+
+        input = br.readLine().split(" ");
+        for (int i = 0; i < n; i++) {
+            pq.add(Long.parseLong(input[i]));
+        }
     }
 }
