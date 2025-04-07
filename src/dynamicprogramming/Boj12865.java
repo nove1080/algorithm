@@ -2,7 +2,6 @@ package dynamicprogramming;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 public class Boj12865 {
 
@@ -13,6 +12,7 @@ public class Boj12865 {
 
     public static void main(String[] args) throws Exception {
         init();
+        System.out.println(solve());
     }
 
     public static void init() throws Exception {
@@ -28,14 +28,22 @@ public class Boj12865 {
 
             things[i] = new Thing(weight, value);
         }
+    }
+    
+    static int solve() {
+        int[][] bag = new int[n + 1][k + 1];
 
-        Arrays.sort(things, (t1, t2) -> {
-            if(t1.weight == t2.weight) {
-                return t2.value - t1.value; //가치가 높은 순서대로 오름차순
-            } else {
-                return t1.weight - t2.weight; //가벼운 물건 순서대로 정렬
+        for (int i = 1; i < n + 1; i++) {
+            for (int j = 1; j < k + 1; j++) {
+                if(things[i - 1].weight > j) { //배낭에 넣을 수 없는 경우
+                    bag[i][j] = bag[i - 1][j];
+                } else { //배낭에 넣을 수 있는 경우
+                    bag[i][j] = Math.max(bag[i - 1][j], bag[i - 1][j - things[i - 1].weight] + things[i - 1].value);
+                }
             }
-        });
+        }
+
+        return bag[n][k];
     }
 
     static class Thing {
