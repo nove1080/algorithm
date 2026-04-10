@@ -9,7 +9,7 @@ public class Main {
         init();
     }
 
-    public static void init() throws Exception {
+    private static void init() throws Exception {
 
     }
 }

@@ -6,91 +6,99 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
 
+import java.io.*;
+import java.util.*;
+
 public class Boj2660 {
+
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
     static int n;
-    static int[][] adj;
-    static int[][] score;
-    static boolean[] vis;
+    static List<Integer>[] adjList;
+    static int[][] scores;
+
     public static void main(String[] args) throws Exception {
         init();
+
+        List<Integer> captains = new ArrayList<>();
+        int minScore = Integer.MAX_VALUE;
         for (int i = 0; i < n; i++) {
-            vis = new boolean[n];
-            bfs(i, i, 1);
-        }
+            int score = bfs(i);
 
-        System.out.println("score============");
-        for (int[] ints : score) {
-            for (int anInt : ints) {
-                System.out.print(anInt + " ");
-            }
-            System.out.println();
-        }
-        System.out.println("answer===========");
-        printAnswer();
-
-    }
-
-    static void init() throws Exception {
-        n = Integer.parseInt(br.readLine());
-        adj = new int[n][n];
-        score = new int[n][n];
-        while(true) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            int num1 = Integer.parseInt(st.nextToken()) - 1;
-            int num2 = Integer.parseInt(st.nextToken()) - 1;
-            if(num1 == -2 && num2 == -2) break;
-
-            adj[num1][num2] = 1;
-            adj[num2][num1] = 1;
-        }
-    }
-    static void bfs(int origin, int v, int depth) {
-        vis[v] = true;
-
-        Queue<Integer> q = new LinkedList<>();
-        for (int next = 0; next < n; next++) {
-            if(adj[v][next] == 0 || vis[next]) continue;
-            vis[next] = true;
-            score[origin][next] = depth;
-            q.add(next);
-        }
-        while (!q.isEmpty()) {
-            bfs(origin, q.poll(), depth + 1);
-        }
-
-    }
-
-    static void printAnswer() {
-        StringBuilder sb = new StringBuilder();
-        int[] finalScores = new int[n];
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                finalScores[i] = Math.max(score[i][j], finalScores[i]);
+            if (minScore > score) {
+                captains.clear();
+                captains.add(i + 1);
+                minScore = score;
+            } else if (minScore == score) {
+                captains.add(i + 1);
             }
         }
 
-        int min = 99;
-        int count = 0;
-        for (int finalScore : finalScores) {
-            if(finalScore == 0) continue;
-            if(min > finalScore) {
-                count = 0;
-                min = finalScore;
-            }
-            if (min == finalScore) {
-                count++;
-            }
+        sb.append(minScore).append(" ").append(captains.size()).append("\n");
+        for (Integer captain : captains) {
+            sb.append(captain).append(" ");
         }
-        sb.append(min).append(" ").append(count).append("\n");
-
-        for (int i = 0; i < n; i++) {
-            if(min == finalScores[i]) {
-                sb.append(i + 1).append(" ");
-            }
-        }
-
         System.out.println(sb);
     }
+
+    public static void init() throws Exception {
+        n = Integer.parseInt(br.readLine());
+
+        adjList = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            adjList[i] = new ArrayList<>();
+        }
+
+        String[] input = br.readLine().split(" ");
+        int n1 = Integer.parseInt(input[0]) - 1;
+        int n2 = Integer.parseInt(input[1]) - 1;
+        while (n1 != -2 && n2 != -2) {
+            adjList[n1].add(n2);
+            adjList[n2].add(n1);
+
+            input = br.readLine().split(" ");
+            n1 = Integer.parseInt(input[0]) - 1;
+            n2 = Integer.parseInt(input[1]) - 1;
+        }
+
+        scores = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(scores[i], Integer.MAX_VALUE);
+        }
+    }
+
+    private static int bfs(int start) {
+        Queue<Node> q = new LinkedList<>();
+        q.add(new Node(start, 0));
+        scores[start][start] = 0;
+
+        while (!q.isEmpty()) {
+            Node cur = q.poll();
+
+            for (Integer next : adjList[cur.num]) {
+
+                if (scores[start][next] <= cur.depth + 1) continue;
+
+                q.add(new Node(next, cur.depth + 1));
+                scores[start][next] = cur.depth + 1;
+            }
+        }
+
+        int finalScore = 0;
+        for (int i = 0; i < n; i++) {
+            finalScore = Math.max(finalScore, scores[start][i]);
+        }
+
+        return finalScore;
+    }
+
+    private static class Node {
+        int num, depth;
+
+        public Node(int num, int depth) {
+            this.num = num;
+            this.depth = depth;
+        }
+    }
 }
+
